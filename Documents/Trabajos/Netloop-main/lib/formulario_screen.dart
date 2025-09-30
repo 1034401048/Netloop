@@ -64,13 +64,17 @@ class _FormularioScreenState extends State<FormularioScreen> {
 
       String downloadUrl = await storageRef.getDownloadURL();
 
-      await FirebaseFirestore.instance.collection("postulaciones").add({
-        "nombre": _nombreController.text.trim(),
-        "telefono": _telefonoController.text.trim(),
-        "trabajo": widget.trabajo,
-        "cvUrl": downloadUrl,
-        "fecha": DateTime.now(),
-      });
+  final userId = FirebaseAuth.instance.currentUser!.uid;
+final ref = FirebaseDatabase.instance.ref("postulaciones/$userId").push();
+
+await ref.set({
+  "nombre": _nombreController.text.trim(),
+  "telefono": _telefonoController.text.trim(),
+  "trabajo": widget.trabajo,
+  "cvUrl": downloadUrl,
+  "fecha": DateTime.now().toIso8601String(),
+});
+
 
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("✅ Postulación enviada correctamente")),
