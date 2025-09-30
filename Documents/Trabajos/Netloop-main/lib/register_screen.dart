@@ -28,16 +28,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
         password: passwordController.text.trim(),
       );
 
-      await FirebaseFirestore.instance
-          .collection("users")
-          .doc(userCredential.user!.uid)
-          .set({
-        "email": emailController.text.trim(),
-        "name": nameController.text.trim(),
-        "lastName": lastNameController.text.trim(),
-        "phone": phoneController.text.trim(),
-        "createdAt": DateTime.now(),
-      });
+   DatabaseReference ref = FirebaseDatabase.instance.ref("users/${userCredential.user!.uid}");
+await ref.set({
+  "email": emailController.text.trim(),
+  "name": nameController.text.trim(),
+  "lastName": lastNameController.text.trim(),
+  "phone": phoneController.text.trim(),
+  "createdAt": DateTime.now().toIso8601String(),
+});
+
 
       if (!mounted) return;
 
