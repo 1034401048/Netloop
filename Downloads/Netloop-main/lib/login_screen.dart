@@ -33,17 +33,38 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void login() async {
+    // Validación de campos vacíos
+    if (emailController.text.isEmpty || passwordController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Por favor, completa todos los campos."),
+          backgroundColor: Colors.redAccent,
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+      return;
+    }
+
     setState(() => loading = true);
 
+    // Simula proceso de inicio de sesión
     await Future.delayed(const Duration(seconds: 2));
 
     setState(() => loading = false);
 
     if (!mounted) return;
+
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(builder: (_) => const HomeScreen()),
     );
+  }
+
+  @override
+  void dispose() {
+    emailController.dispose();
+    passwordController.dispose();
+    super.dispose();
   }
 
   @override
@@ -70,26 +91,40 @@ class _LoginScreenState extends State<LoginScreen> {
               style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold, color: Colors.blue),
             ),
             const SizedBox(height: 30),
-            TextField(controller: emailController, decoration: _inputDecoration("Email", Icons.email)),
+            TextField(
+              controller: emailController,
+              keyboardType: TextInputType.emailAddress,
+              decoration: _inputDecoration("Correo electrónico", Icons.email),
+            ),
             const SizedBox(height: 15),
-            TextField(controller: passwordController, obscureText: true, decoration: _inputDecoration("Contraseña", Icons.lock)),
+            TextField(
+              controller: passwordController,
+              obscureText: true,
+              decoration: _inputDecoration("Contraseña", Icons.lock),
+            ),
             const SizedBox(height: 25),
             loading
                 ? const CircularProgressIndicator(color: Colors.blue)
                 : ElevatedButton(
-              onPressed: login,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.blueAccent,
-                minimumSize: const Size(double.infinity, 50),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                elevation: 4,
-              ),
-              child: const Text("Ingresar", style: TextStyle(fontSize: 18)),
-            ),
+                    onPressed: login,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.blueAccent,
+                      minimumSize: const Size(double.infinity, 50),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                      elevation: 4,
+                    ),
+                    child: const Text("Ingresar", style: TextStyle(fontSize: 18)),
+                  ),
             const SizedBox(height: 20),
             TextButton(
-              onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const RegisterScreen())),
-              child: const Text("¿No tienes cuenta? Regístrate", style: TextStyle(color: Colors.blue)),
+              onPressed: () => Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const RegisterScreen()),
+              ),
+              child: const Text(
+                "¿No tienes cuenta? Regístrate",
+                style: TextStyle(color: Colors.blue),
+              ),
             ),
           ],
         ),
